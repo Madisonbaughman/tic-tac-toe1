@@ -10,6 +10,7 @@ function Board(){
     const initialValue = JSON.parse(saved);
     return initialValue || new Array(9).fill({value: ' '})
   });
+  let [turn, setTurn] = useState(0)
   let [winner, setWinner] = useState('')
   let [toggle, setToggle] = useState('X');
   let [gameOver, setGameOver] = useState(false)
@@ -31,6 +32,7 @@ function Board(){
         setBoardArr(copyBoard)
         // reset the board
         toggle === "X" ? setToggle('O') : setToggle('X') 
+        setTurn(n => n+1)
         //run a function to see if anyone has won
         
         }
@@ -50,19 +52,25 @@ function Board(){
                         [2,4,6]]
             
         function didItWin([a,b,c]){
-          console.log( boardArr)
+            console.log( boardArr)
+            console.log('turn: '+ turn)
           if (
             (boardArr[a].value !== ' ' && boardArr[a].value === boardArr[b].value && boardArr[b].value === boardArr[c].value) 
           ){
               setGameOver(true) 
               setWinner(boardArr[a].value)
-          } 
+          } else if (
+            turn === 9 
+          ){
+            setGameOver(true)
+            setWinner('CATS')
+          }
           return
         }
 
       possWins.map(subArr => didItWin(subArr)); 
 
-    }, [boardArr])
+    }, [boardArr, turn])
 
 
   return(
@@ -87,6 +95,6 @@ function App() {
 }
 
 // highlight winning row
-// reset button
+// cats game
 
 export default App;
