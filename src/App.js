@@ -1,6 +1,7 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 import './App.css';
+import GameOver from './GameOver.js'
 
 function Board(){
   let [boardArr, setBoardArr] = useState(() => {
@@ -9,7 +10,7 @@ function Board(){
     const initialValue = JSON.parse(saved);
     return initialValue || new Array(9).fill({value: ' '})
   });
-  
+  let [winner, setWinner] = useState('')
   let [toggle, setToggle] = useState('X');
   let [gameOver, setGameOver] = useState(false)
 
@@ -54,6 +55,7 @@ function Board(){
             (boardArr[a].value !== ' ' && boardArr[a].value === boardArr[b].value && boardArr[b].value === boardArr[c].value) 
           ){
               setGameOver(true) 
+              setWinner(boardArr[a].value)
           } 
           return
         }
@@ -69,7 +71,7 @@ function Board(){
         {displayBoard}
       </div>
       <div className='row'>
-      {gameOver && <h2>Game Over!</h2>}
+        {gameOver && <GameOver winner={winner} setBoardArr={setBoardArr}/>}
       </div>
     </div>
   )
@@ -85,6 +87,6 @@ function App() {
 }
 
 // highlight winning row
-// add to local storage
+// reset button
 
 export default App;
