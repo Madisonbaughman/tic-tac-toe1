@@ -3,7 +3,13 @@ import {useState, useEffect} from 'react';
 import './App.css';
 
 function Board(){
-  let [boardArr, setBoardArr] = useState(() => new Array(9).fill({value: ' '}))
+  let [boardArr, setBoardArr] = useState(() => {
+    // getting stored value
+    const saved = localStorage.getItem("boardArr");
+    const initialValue = JSON.parse(saved);
+    return initialValue || new Array(9).fill({value: ' '})
+  });
+  
   let [toggle, setToggle] = useState('X');
   let [gameOver, setGameOver] = useState(false)
 
@@ -13,10 +19,11 @@ function Board(){
   // could I have attached onClick here to pass in index ^^ ? but then i have 9 click handlers
   
     function XorO(e){
-    // why doesnt stop event Propagation work?
+    // if the game isnt over
      if (gameOver === false){
+      // if they click a space and that space is empty
       if (e.target.className !== 'row' && e.target.innerHTML === ' ' ){
-        console.log(e.target.id)
+        console.log('e.target.id ' + e.target.id)
         // the value of item in array equals the toggle
         let copyBoard = [...boardArr]
         copyBoard[e.target.id] = {value: toggle}
@@ -24,12 +31,14 @@ function Board(){
         // reset the board
         toggle === "X" ? setToggle('O') : setToggle('X') 
         //run a function to see if anyone has won
-        console.log(boardArr)
+        
         }
       }
     }
  
     useEffect (() => {
+      localStorage.setItem("boardArr", JSON.stringify(boardArr));
+
       const possWins = [[0,1,2],
                         [3,4,5],
                         [6,7,8],
@@ -40,6 +49,7 @@ function Board(){
                         [2,4,6]]
             
         function didItWin([a,b,c]){
+          console.log( boardArr)
           if (
             (boardArr[a].value !== ' ' && boardArr[a].value === boardArr[b].value && boardArr[b].value === boardArr[c].value) 
           ){
@@ -48,8 +58,9 @@ function Board(){
           return
         }
 
-      possWins.map(subArr => didItWin(subArr))
-    })
+      possWins.map(subArr => didItWin(subArr)); 
+
+    }, [boardArr])
 
 
   return(
